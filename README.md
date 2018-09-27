@@ -51,13 +51,6 @@
 	display: block;
 }
 
-/* 1.1.0v 부터 사용하지 않음
-.jd-slider .transition--none {
-	-webkit-transition: none !important;
-	transition: none !important;
-}
-*/
-
 /* 페이드인 기능 사용 시에 맞는 css 구문 (slide-fade 클래스 활용) */
 .jd-slider.fade .slide-area li {
 	display: block;
