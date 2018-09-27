@@ -66,7 +66,7 @@
 	opacity: 1;
 }
 
-/* 이벤트 컨트롤러 hide (플러그인 옵션값 isUse:false 일 경우 .slider에 slider--none 클래스 자동 추가됨.) */
+/* 이벤트 컨트롤러 hide (플러그인 옵션값 isUse:false 일 경우 .jd-slider에 slider--none 클래스 자동 추가됨.) */
 .jd-slider.slider--none .prev, .slider.slider--none .next, .slider.slider--none .controller {
 	display: none;
 }

@@ -1,6 +1,6 @@
 /**
  * 2018-09-27
- * 0.1.0 ver
+ * 0.1.1 ver
  * Kim Yeonho
  * https://github.com/jadenspace/jdSlider/
  */
