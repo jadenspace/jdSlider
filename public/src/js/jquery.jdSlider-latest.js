@@ -1,6 +1,6 @@
 /**
- * 2018-09-27
- * 0.1.1 ver
+ * 2018-10-23
+ * 0.1.2 ver
  * Kim Yeonho
  * https://github.com/jadenspace/jdSlider/
  */
@@ -37,10 +37,10 @@
             slideToScroll: 1, // 슬라이딩 되어지는 슬라이드 수
             slideStart: 1, // 시작 슬라이드 번호
             margin: null, // 슬라이드 간격 (margin-right와 동일하게 구성 필요 | null일 경우 style margin-right값을 따른다.)
-            speed: 500, // 슬라이딩 속도 (1000 = 1초)
-            timingFunction: 'ease', // ie9 이하 제외 적용 (transition-timing-function)
+            speed: 500, // 슬라이딩 속도 (ms)
+            timingFunction: 'cubic-bezier(.02,.01,.47,1)', // ie9 이하 제외 적용 (transition-timing-function)
             easing: 'swing', // ie9 이하 적용 (animate easing)
-            interval: 4000, // 자동재생 속도 (1000 = 1초)
+            interval: 4000, // 자동재생 속도 (ms)
             touchDistance: 20, // 스와이프 허용 거리
             resistanceRatio: .5, // 스와이프 저항 비율
             isOverflow: false, // 사이드 영역 노출 여부
@@ -199,7 +199,7 @@
                         }
                         if (len > 1) {
                             for (; i < len - 1; i++) {
-                                if (winW > _.opt.responsive[i].viewSize && _.winW <= _.opt.responsive[i + 1].viewSize) {
+                                if (_.winW > _.opt.responsive[i].viewSize && _.winW <= _.opt.responsive[i + 1].viewSize) {
                                     _.responsiveLen = i + 1;
                                 }
                             }
@@ -248,7 +248,7 @@
                     _.currentTab().func(false);
                     _.rendering3D().func();
                     _.imgDrag().func();
-                    _.indicate.find('.on').removeClass('on');
+                    _.indicate.hide().find('.on').removeClass('on');
                     _.obj.addClass(_.opt.noSliderClass);
                     if (_.auto.attr('data-state') === 'false') _.control().auto();
                 },
@@ -490,8 +490,10 @@
                 totalLen = _.slide.find('>*').length;
                 slideLen = _.slide.find('>*').not('.clone').length;
                 // width
-                if (window.getComputedStyle(_.wrap[0], null).width.split('px')[0].indexOf('.') !== -1) {
-                    _.wrap.css('width', wrapW);
+                if (window.getComputedStyle){
+                    if (window.getComputedStyle(_.wrap[0], null).width.split('px')[0].indexOf('.') !== -1) {
+                        _.wrap.css('width', wrapW);
+                    }
                 }
                 _.slide.find('>*').css('width', Math.ceil((wrapW - (_.opt.slideShow - 1) * _.marginRight) / _.opt.slideShow) + 'px'); // li 너비
                 firstIdx = _.slide.find('>*').not('.clone').eq(0).index();
@@ -621,20 +623,20 @@
                 if (!is.mobile && _.opt.isCursor) {
                     // 웹에서 마우스 오버 도중 자동플레이 방지 설정
                     _.slide
-                        .on('mouseover', hover.true)
-                        .on('mouseout', hover.false);
+                        .on('mouseover', hover.isTrue)
+                        .on('mouseout', hover.isFalse);
                     _.prev
-                        .on('mouseover', hover.true)
-                        .on('mouseout', hover.false);
+                        .on('mouseover', hover.isTrue)
+                        .on('mouseout', hover.isFalse);
                     _.next
-                        .on('mouseover', hover.true)
-                        .on('mouseout', hover.false);
+                        .on('mouseover', hover.isTrue)
+                        .on('mouseout', hover.isFalse);
                     _.indicate.find('a,button')
-                        .on('mouseover', hover.true)
-                        .on('mouseout', hover.false);
+                        .on('mouseover', hover.isTrue)
+                        .on('mouseout', hover.isFalse);
                     _.auto
-                        .on('mouseover', hover.true)
-                        .on('mouseout', hover.false);
+                        .on('mouseover', hover.isTrue)
+                        .on('mouseout', hover.isFalse);
                 }
                 if (_.opt.isTouch) {
                     _.slide
@@ -650,10 +652,10 @@
                 }
             },
             hover = {
-                true: function () {
+                isTrue: function () {
                     _.slide.attr('data-hover', 'true');
                 },
-                false: function () {
+                isFalse: function () {
                     _.slide.attr('data-hover', 'false');
                 }
             },
@@ -678,20 +680,20 @@
                 _.obj.off('click', _.opt.auto);
                 if (!is.mobile) {
                     _.slide
-                        .off('mouseover', hover.true)
-                        .off('mouseout', hover.false);
+                        .off('mouseover', hover.isTrue)
+                        .off('mouseout', hover.isFalse);
                     _.prev
-                        .off('mouseover', hover.true)
-                        .off('mouseout', hover.false);
+                        .off('mouseover', hover.isTrue)
+                        .off('mouseout', hover.isFalse);
                     _.next
-                        .off('mouseover', hover.true)
-                        .off('mouseout', hover.false);
+                        .off('mouseover', hover.isTrue)
+                        .off('mouseout', hover.isFalse);
                     _.indicate.find('a,button')
-                        .off('mouseover', hover.true)
-                        .off('mouseout', hover.false);
+                        .off('mouseover', hover.isTrue)
+                        .off('mouseout', hover.isFalse);
                     _.auto
-                        .off('mouseover', hover.true)
-                        .off('mouseout', hover.false);
+                        .off('mouseover', hover.isTrue)
+                        .off('mouseout', hover.isFalse);
                 }
                 _.slide
                     .off('touchstart', $.proxy(_.swipe(), 'touchStartFn'))
@@ -704,6 +706,7 @@
 
         return {
             init: init,
+            hover: hover,
             auto: auto,
             reset: reset
         };
@@ -851,9 +854,9 @@
                                     marginLeft: this.x + 'px'
                                 }, _.duration, _.opt.easing, function () {
                                     if (_.slide.find('>.on').hasClass('clone')) {
-                                        _.slide.css('marginLeft', this.x - this.slideWid * this.slideLen + 'px');
+                                        _.slide.css('marginLeft', prev.x - prev.slideWid * prev.slideLen + 'px');
                                         _.slide.find('>.on').removeClass('on');
-                                        _.slide.find('>*').eq(this.slideIdx - _.opt.slideToScroll + this.slideLen).addClass('on');
+                                        _.slide.find('>*').eq(prev.slideIdx - _.opt.slideToScroll + prev.slideLen).addClass('on');
                                     }
                                     _.opt.callback();
                                     _.isMotion = false;
@@ -1036,9 +1039,9 @@
                                     marginLeft: this.x + 'px'
                                 }, _.duration, _.opt.easing, function () {
                                     if (_.slide.find('>.on').hasClass('clone')) {
-                                        _.slide.css('marginLeft', this.x + this.slideWid * this.slideLen + 'px');
+                                        _.slide.css('marginLeft', next.x + next.slideWid * next.slideLen + 'px');
                                         _.slide.find('>.on').removeClass('on');
-                                        _.slide.find('>*').eq(this.slideIdx - this.slideLen + _.opt.slideToScroll).addClass('on');
+                                        _.slide.find('>*').eq(next.slideIdx - next.slideLen + _.opt.slideToScroll).addClass('on');
                                     }
                                     _.opt.callback();
                                     _.isMotion = false;
@@ -1102,11 +1105,11 @@
                     if (is.css3) {
                         _.slide.find('>.on').removeClass('on');
                     } else {
-                        _.slide.find('>.on').removeClass('on').stop().animate({opacity: 0}, _.duration, _.opt.easing);
+                        _.slide.find('>.on').removeClass('on');
                     }
                     _.slide.find('>*').eq(this.firstIdx + this.currentIdx * _.opt.slideToScroll).addClass('on');
                 },
-                func: function (that) {
+                func: function (that, isTrigger) {
                     this.slideLen = _.slide.find('>*').not('.clone').length;
                     this.firstIdx = _.slide.find('>*').not('.clone').eq(0).index();
                     if (_.isMotion) return false;
@@ -1129,7 +1132,7 @@
                     _.indicate.find('.on').removeClass('on');
                     _.indicate.find('a,button').eq(this.currentIdx).addClass('on');
                     extreme();
-                    _.opt.progress();
+                    if (!isTrigger) _.opt.progress();
                     _.currentTab().func(false);
                     if (_.opt.isSliding) {
                         this.x = _.opt.isLoop
@@ -1143,7 +1146,7 @@
                                 transform: 'translate3d(' + this.x + 'px,0,0)'
                             });
                             setTimeout(function () {
-                                _.opt.callback();
+                                if (!isTrigger) _.opt.callback();
                                 _.isMotion = false;
                                 _.currentTab().func(true);
                             }, _.duration);
@@ -1154,7 +1157,7 @@
                                 _.duration,
                                 _.opt.easing,
                                 function () {
-                                    _.opt.callback();
+                                    if (!isTrigger) _.opt.callback();
                                     _.isMotion = false;
                                     _.currentTab().func(true);
                                 }
@@ -1169,7 +1172,7 @@
                                 },
                                 _.duration,
                                 _.opt.easing
-                            );
+                            ).siblings().animate({opacity: 0}, _.duration, _.opt.easing);
                         }
                         setTimeout(function () {
                             _.opt.callback();
@@ -1526,10 +1529,10 @@
             },
             event = function () {
                 if (!docHidden || !listener) init();
-                document.addEventListener(listener, func);
+                if (document.addEventListener) document.addEventListener(listener, func);
             },
             reset = function () {
-                document.removeEventListener(listener, func);
+                if (document.removeEventListener) document.removeEventListener(listener, func);
             };
 
         return {
@@ -1598,17 +1601,23 @@
         var _ = this,
             event = function () {
                 _.obj
-                    .on('init', $.proxy(_.init(), 'func')) // 구조 초기화
+                    .on('init slideInit', $.proxy(_.init(), 'func')) // 구조 초기화
                     .on('update', $.proxy(_.update(), 'func')) // size 초기화
-                    .on('resizeFn', $.proxy(_.resize(), 'func')) // 반응형 분기가 변경 되었을 시에는 slideInit, 같은 분기일 시에는 update 실행.
+                    .on('resizeFn', $.proxy(_.resize(), 'func')) // 반응형 분기가 변경 되었을 시에는 init, 같은 분기일 시에는 update 실행.
                     .on('removeFn', $.proxy(_.remove(), 'func')); // 슬라이더 기능 제거
+                _.indicate.find('a').on('moveTo', function () {
+                    _.control().indicate.func($(this), true);
+                });
             },
             reset = function () {
                 _.obj
-                    .off('slideInit', $.proxy(_.init(), 'func'))
+                    .off('init slideInit', $.proxy(_.init(), 'func'))
                     .off('update', $.proxy(_.update(), 'func'))
                     .off('resizeFn', $.proxy(_.resize(), 'func'))
                     .off('removeFn', $.proxy(_.remove(), 'func'));
+                _.indicate.find('a').off('moveTo', function () {
+                    _.control().indicate.func($(this), true);
+                });
             };
 
         return {
