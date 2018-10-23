@@ -1,8 +1,9 @@
 /**
  * 2018-10-23
- * 0.1.2 ver
+ * 0.1.3 ver
  * Kim Yeonho
  * https://github.com/jadenspace/jdSlider/
+ * https://www.npmjs.com/package/jd-slider/
  */
 
 ;(function (factory) {
@@ -97,12 +98,18 @@
         },
         $win = $(window),
         capturing = function (e) {
-            if (e.preventDefault) e.preventDefault();
-            else e.returnValues = false;
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                e.returnValues = false;
+            }
         },
         bubbling = function (e) {
-            if (e.stopPropagation) e.stopPropagation();
-            else e.cancelBubble = true;
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else {
+                e.cancelBubble = true;
+            }
         };
 
     JdSlider = (function () {
@@ -446,20 +453,29 @@
     JdSlider.prototype.imgDrag = function () {
         var _ = this,
             set = function () {
-                if (is.ff) _.slide.find('img').on('dragstart', function () {
-                    return false;
-                });
-                else _.slide.find('img').css('-webkit-user-drag', 'none');
+                if (is.ff) {
+                    _.slide.find('a,img').on('dragstart', function () {
+                        return false;
+                    });
+                } else {
+                    _.slide.find('a,img').css('-webkit-user-drag', 'none');
+                }
             },
             reset = function () {
-                if (is.ff) _.slide.find('img').off('dragstart', function () {
-                    return false;
-                });
-                else _.slide.find('img').css('-webkit-user-drag', '');
+                if (is.ff) {
+                    _.slide.find('a,img').off('dragstart', function () {
+                        return false;
+                    });
+                } else {
+                    _.slide.find('a,img').css('-webkit-user-drag', '');
+                }
             },
             func = function () {
-                if (_.opt.isDrag && _.opt.isUse && _.slide.find('>*').not('.clone').length > _.opt.slideShow) set();
-                else reset();
+                if (_.opt.isDrag && _.opt.isUse && _.slide.find('>*').not('.clone').length > _.opt.slideShow) {
+                    set();
+                } else {
+                    reset();
+                }
             };
 
         return {
@@ -1388,10 +1404,8 @@
             },
             dragMoveFn = function (e) {
                 if (_.isMotion && _.swipes.touchStep === 1) {
-                    _.swipes.touchX2 = e.pageX;
-                    _.swipes.touchY2 = e.pageY;
-                    _.swipes.touchMoveX = _.swipes.touchX2 - _.swipes.touchX1;
-                    _.swipes.touchMoveY = _.swipes.touchY2 - _.swipes.touchY1;
+                    _.swipes.touchMoveX = e.pageX - _.swipes.touchX1;
+                    _.swipes.touchMoveY = e.pageY - _.swipes.touchY1;
                     if (_.opt.isSliding) {
                         var currentMove;
                         _.swipes.position.current = _.swipes.startPosition + _.swipes.touchMoveX / (_.opt.slideShow / _.opt.slideToScroll);
@@ -1420,10 +1434,8 @@
             dragEndFn = function (e) {
                 if (_.isMotion && _.swipes.touchStep === 1) {
                     _.swipes.touchStep = 2;
-                    _.swipes.touchX2 = e.pageX;
-                    _.swipes.touchY2 = e.pageY;
-                    _.swipes.touchMoveX = _.swipes.touchX2 - _.swipes.touchX1;
-                    _.swipes.touchMoveY = _.swipes.touchY2 - _.swipes.touchY1;
+                    _.swipes.touchMoveX = e.pageX - _.swipes.touchX1;
+                    _.swipes.touchMoveY = e.pageY - _.swipes.touchY1;
                     _.transition(_.slide, 'transform');
                     if (Math.abs(_.swipes.touchMoveX) < _.opt.touchDistance) {
                         _.slide.find('a').off('click touchstart');
@@ -1605,7 +1617,7 @@
                     .on('update', $.proxy(_.update(), 'func')) // size 초기화
                     .on('resizeFn', $.proxy(_.resize(), 'func')) // 반응형 분기가 변경 되었을 시에는 init, 같은 분기일 시에는 update 실행.
                     .on('removeFn', $.proxy(_.remove(), 'func')); // 슬라이더 기능 제거
-                _.indicate.find('a').on('moveTo', function () {
+                _.indicate.find('a,button').on('moveTo', function () {
                     _.control().indicate.func($(this), true);
                 });
             },
@@ -1615,7 +1627,7 @@
                     .off('update', $.proxy(_.update(), 'func'))
                     .off('resizeFn', $.proxy(_.resize(), 'func'))
                     .off('removeFn', $.proxy(_.remove(), 'func'));
-                _.indicate.find('a').off('moveTo', function () {
+                _.indicate.find('a,button').off('moveTo', function () {
                     _.control().indicate.func($(this), true);
                 });
             };
