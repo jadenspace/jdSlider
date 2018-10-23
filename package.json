@@ -1,6 +1,6 @@
 {
   "name": "jd-slider",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Easy-to-custrate jquery slider plugin",
   "main": "./public/src/js/jquery.jdSlider-latest.js",
   "scripts": {
