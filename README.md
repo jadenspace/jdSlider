@@ -158,4 +158,7 @@ $(selector)
     .trigger('update') // 사이즈 갱신 (슬라이더 적용 후 사이즈를 강제로 수정한 경우)
     .trigger('resizeFn') // 반응형 분기가 변경 되었을 시에는 init, 같은 분기일 시에는 update 실행.
     .trigger('removeFn') // 슬라이더 전체 기능 제거
+
+$(indicateButton)
+    .trigger('moveTo') // indicateButton 으로 이동 (progress, callback 미발생)
 ```
