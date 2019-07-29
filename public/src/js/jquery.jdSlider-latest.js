@@ -1,6 +1,6 @@
 /**
- * 2018-10-23
- * 0.1.3 ver
+ * 2019-07-29
+ * 0.1.3.1 ver
  * Kim Yeonho
  * https://github.com/jadenspace/jdSlider/
  * https://www.npmjs.com/package/jd-slider/
@@ -166,11 +166,11 @@
                     prev: null,
                     current: null
                 },
-                scrolling: null,
+                scrolling: null
             };
 
-            _.setTimer1 = null;
-            _.setTimer2 = null;
+            _.setTimer = null;
+            _.setInter = null;
             _.setLoop = null;
 
             _.isMotion = false;
@@ -677,11 +677,11 @@
             },
             auto = function () {
                 if (!_.opt.isCustomAuto) {
-                    if (_.setTimer1) clearInterval(_.setTimer1);
-                    if (_.setTimer2) clearInterval(_.setTimer2);
-                    _.setTimer1 = setTimeout(function () {
+                    if (_.setTimer) clearTimeout(_.setTimer);
+                    if (_.setInter) clearInterval(_.setInter);
+                    _.setTimer = setTimeout(function () {
                         _.control().interval();
-                        _.setTimer2 = setInterval(
+                        _.setInter = setInterval(
                             _.control().interval,
                             _.opt.interval + _.duration
                         );
@@ -1234,9 +1234,9 @@
                     });
                 } else {
                     // 정지상태로
-                    if ((_.setTimer1 || _.setTimer2) && !_.opt.isCustomAuto) {
-                        clearInterval(_.setTimer1);
-                        clearInterval(_.setTimer2);
+                    if ((_.setTimer || _.setInter) && !_.opt.isCustomAuto) {
+                        clearTimeout(_.setTimer);
+                        clearInterval(_.setInter);
                     }
                     _.auto.addClass(_.opt.playClass).removeClass(_.opt.pauseClass).attr({
                         'data-state': 'true',
