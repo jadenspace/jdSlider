@@ -9,7 +9,7 @@ const gulp = require('gulp'),
     rename = require('gulp-rename'),
     browserSync = require('browser-sync').create(),
     src = 'public/src', // 작업파일
-    dist = 'public/dist', // 배포파일
+    dist = 'public/output', // 배포파일
     scssOptions = {
         outputStyle: 'expanded', // 컴파일 결과 코드스타일 지정 (nested, expanded, compact, compressed)
         indentType: 'tab', // css 들여쓰기 타입 (space, tab)
@@ -62,7 +62,7 @@ gulp.task('css:minify', ['scss:compile'], () => {
 // jquery load
 gulp.task('js:jquery', () => {
     return gulp
-        .src('./node_modules/jquery/dist/jquery.js')
+        .src('./node_modules/jquery/output/jquery.js')
         .pipe(rename('jquery.js'))
         .pipe(gulp.dest(dist + '/js'));
 });
@@ -77,7 +77,7 @@ gulp.task('js:uglify', ['js:jquery'], () => {
         .pipe(browserSync.reload({ stream: true }));
 });
 
-// dist 폴더 기준으로 웹서버 실행
+// output 폴더 기준으로 웹서버 실행
 gulp.task('server', ['html:copy', 'css:minify', 'js:uglify'], () => {
     return browserSync.init({
         server: {
